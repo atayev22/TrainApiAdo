@@ -1,4 +1,5 @@
 ﻿using BLog.IServices;
+using DataAccess;
 using DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -9,13 +10,23 @@ namespace TrainApiAdo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderListConroller : ControllerBase
+    public class OrderListController : ControllerBase
     {
         IOrderListService orderService;
 
-        public OrderListConroller(IOrderListService orderService)
+        public OrderListController(IOrderListService orderService)
         {
             this.orderService = orderService;
+        }
+
+        [HttpGet("GetEXEC/{id}")]
+        public IActionResult GetEXEC(int id)
+        {
+
+            string sql = $@"EXEC [GETORDER] {id}";
+            var data = DbContext.Execute(sql);
+            var serJson = JsonConvert.SerializeObject(data);
+            return Ok(serJson);
         }
 
         // GET: api/<OrderListConroller>

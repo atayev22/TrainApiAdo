@@ -44,7 +44,7 @@ namespace BLog.Services
         public DataTable GetJoin(string sql)
         {
             sql = $@"SELECT TRN_ORDERID,TRN_ORDERNOTE,TRN_ORDERSTATUS,U.NAME,U.SURNAME,U.PASSWORD,U.STATUS FROM TBL_ORDERLIST AS P
-                        LEFT JOIN TBL_USERLIST AS U
+                        INNER JOIN TBL_USERLIST AS U
                         ON(P.USERID=U.USERID)";
             return repo.GetJoin(sql);
         }
