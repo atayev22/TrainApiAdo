@@ -10,6 +10,6 @@ namespace BLog.IServices
 {
     public interface IOrderListService: IBaseService<OrderList>
     {
-        public DataTable GetJoin(string sql);
+        public DataTable GetJoin(string? sql = null);
     }
 }

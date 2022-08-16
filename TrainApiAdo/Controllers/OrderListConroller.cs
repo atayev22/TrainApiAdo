@@ -54,6 +54,23 @@ namespace TrainApiAdo.Controllers
             }
         }
 
+
+        [HttpGet("GetJoin")]
+        public IActionResult GetJoin()
+        {
+            try
+            {
+                var order = orderService.GetJoin();
+                var serJson=JsonConvert.SerializeObject(order);
+                return Ok(serJson);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.StackTrace);
+            }
+        }
+
         // POST api/<OrderListConroller>
         [HttpPost("Add")]
         public void Add([FromBody] OrderList order)
