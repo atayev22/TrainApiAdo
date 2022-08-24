@@ -65,10 +65,11 @@ namespace TrainApiAdo.Controllers
 
         // PUT api/<ValuesController>/5
         [HttpPut("Update")]
-        public void Update([FromBody] UserList user)
+        public IActionResult Update([FromBody] UserList user)
         {
             string? value = null;
             userService.Update(user, UserList.table, value);
+            return NoContent();
         }
 
         // DELETE api/<ValuesController>/5

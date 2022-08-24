@@ -14,7 +14,7 @@ namespace DataAccess.Entities
         public string? NAME { get; set; }
         public string? SURNAME { get; set; }
         public string? PASSWORD { get; set; }
-        public byte STATUS { get; set; }
+        public short STATUS { get; set; }
         
     }
 }
