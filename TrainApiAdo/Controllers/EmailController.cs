@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
-
+using MimeKit.Text;
 
 namespace TrainApiAdo.Controllers
 {
@@ -14,14 +16,17 @@ namespace TrainApiAdo.Controllers
         {
 
             MimeMessage mail = new MimeMessage();
-            mail.From.Add(MailboxAddress.Parse("mayra.botsford17@ethereal.email"));
+            mail.From.Add(MailboxAddress.Parse("atayevkamran222@gmail.com"));
             mail.To.Add(MailboxAddress.Parse($"{mailArdess}"));
-            mail.Subject = "Train App";
-            mail.Body = new TextPart(text);
+            mail.Subject = "Uniser LLC";
+            mail.Body = new TextPart(TextFormat.Text) { Text="Deyerli musderi"+text};
 
 
-            //using var smtp = new SmtpClient;
-            //smtp
+            using var smtp = new SmtpClient();
+            smtp.Connect("smtp.gmail.com", 465, true);
+            smtp.Authenticate("atayevkamran222@gmail.com", "atayevkamran2002");
+            smtp.Send(mail);
+            smtp.Disconnect(true);
 
             return Ok();
         }
