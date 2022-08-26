@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repo.IRepositories;
 using Repo.Repositories;
+using AutoMapper;
+using BLog.Helper;
+using DataAccess.Entities;
+using DTO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 #region BLog
 
 builder.Services.AddScoped<ITransportListService, TransportListService>();
+builder.Services.AddScoped<IUserService<User, UserDTO>, UserService>();
 builder.Services.AddScoped<IUserListService, UserListService>();
 builder.Services.AddScoped<IOrderListService, OrderListService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -26,6 +31,15 @@ builder.Services.AddControllers().AddNewtonsoftJson(x =>
 builder.Services.AddControllers().AddNewtonsoftJson();
 #endregion
 
+#region Mapper
+var mapConfiq = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MapperProfile());
+});
+
+builder.Services.AddSingleton(mapConfiq.CreateMapper());
+
+#endregion
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
