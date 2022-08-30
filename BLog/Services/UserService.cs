@@ -33,11 +33,11 @@ namespace BLog.Services
             {
                 foreach (byte s in passSalt)
                 {
-                    salt += s;
+                    salt += s.ToString("x2");
                 }
                 foreach (byte h in passHash)
                 {
-                    hash += h;
+                    hash += h.ToString("x2");
                 }
 
                 //newPass = salt + hash;
@@ -47,7 +47,7 @@ namespace BLog.Services
 
             var data = mapper.Map<User>(user);
 
-            value = $@"(name,passwordHash,passwordSalt) VALUES({data.Name},{hash},{salt})";
+            value = $@"(name,passwordHash,passwordSalt) VALUES('{data.Name}','{hash}','{salt}')";
 
             repo.Add(data, table, value);
         }
@@ -61,6 +61,20 @@ namespace BLog.Services
             }
         }
 
+        public bool VeryfyPassHash(string? pass, byte[] passHash, byte[] passSalt)
+        {
+            using(var hmac = new HMACSHA512(passSalt))
+            {
+                var hash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(pass));
+                return hash.SequenceEqual(passHash);
+            }
+        }
 
+        
+
+        public bool LogIn(User user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

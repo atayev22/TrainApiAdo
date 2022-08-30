@@ -11,6 +11,7 @@ namespace BLog.IServices
     {
         public void Register(UserDTO user, string table, string value);
         public void CreatePassHash(string? pass, out byte[] passHash, out byte[] passSalt);
+        public bool LogIn(User user);
         
     }
 }
