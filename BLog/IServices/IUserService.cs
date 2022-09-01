@@ -10,7 +10,7 @@ namespace BLog.IServices
     public interface IUserService<User,UserDTO>
     {
         public void Register(UserDTO user, string table, string value);
-        public void CreatePassHash(string? pass, out byte[] passHash, out byte[] passSalt);
+        public void CreatePassHash(string? pass, out byte[] passHash);
         public bool LogIn(UserDTO user, string table, string value);
         
     }

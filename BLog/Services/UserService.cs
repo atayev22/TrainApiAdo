@@ -28,16 +28,12 @@ namespace BLog.Services
 
         public void Register(UserDTO user, string table, string value)
         {
-            CreatePassHash(user.Password, out byte[] passHash, out byte[] passSalt);
-            string? salt = null;
+            CreatePassHash(user.Password, out byte[] passHash);
             string? hash = null;
 
-            if (passHash != null && passSalt != null)
+            if (passHash != null )
             {
-                foreach (byte s in passSalt)
-                {
-                    salt += s.ToString("x2");
-                }
+                
                 foreach (byte h in passHash)
                 {
                     hash += h.ToString("x2");
@@ -48,24 +44,23 @@ namespace BLog.Services
 
             var data = mapper.Map<User>(user);
 
-            value = $@"(name,passwordHash,passwordSalt) VALUES('{data.Name}','{hash}','{salt}')";
+            value = $@"(name,passwordHash,passwordSalt) VALUES('{data.Name}','{hash}')";
 
             repo.Add(data, table, value);
         }
 
-        public void CreatePassHash(string? pass, out byte[] passHash, out byte[] passSalt)
+        public void CreatePassHash(string? pass, out byte[] passHash)
         {
             using(var hmac = new HMACMD5())
             {
-                passSalt = hmac.Key;
                 passHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass)); 
             }
         }
 
-        public bool VeryfyPassHash(string? pass, byte[] passHash, byte[] passSalt)
+        public bool VeryfyPassHash(string? pass, byte[] passHash)
         {
             
-            using(var hmac = new HMACMD5(passSalt))
+            using(var hmac = new HMACMD5())
             {
                 string? pp=null;
                 var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass));
@@ -82,10 +77,9 @@ namespace BLog.Services
         public bool LogIn(UserDTO user, string table, string value)
         {
             
-            byte[] passHash;
-            byte[] passSalt;
+            byte[] passHash;            
             var data = mapper.Map<User>(user);
-            value = $@"SELECT name,passwordHash,passwordSalt FROM Users
+            value = $@"SELECT name,passwordHash FROM Users
                         WHERE name='{user.Name}'";
 
             reader = DbContext.ExecuteRead(value);
@@ -93,9 +87,9 @@ namespace BLog.Services
             {
                        
                 passHash = Encoding.UTF8.GetBytes(reader["passwordHash"].ToString());
-                passSalt = Encoding.UTF8.GetBytes(reader["passwordSalt"].ToString());
                 
-                if(VeryfyPassHash(user.Password,passHash,passSalt)==true)
+                
+                if(VeryfyPassHash(user.Password,passHash)==true)
                 {
                     break;
                 }
