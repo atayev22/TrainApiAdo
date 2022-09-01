@@ -25,5 +25,23 @@ namespace TrainApiAdo.Controllers
             userService.Register(user, DataAccess.Entities.User.table, value);
             return Ok();
         }
+
+        [HttpPost("Login")]
+        public IActionResult LogIn(UserDTO user)
+        {
+            try
+            {
+                string? value = null;
+                userService.LogIn(user, DataAccess.Entities.User.table, value);
+                return Ok();
+
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+            
+        }
     }
 }

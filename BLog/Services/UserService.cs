@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BLog.IServices;
+using DataAccess;
 using DataAccess.Entities;
 using DTO;
+using Microsoft.Data.SqlClient;
 using Repo.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,7 @@ namespace BLog.Services
     {
         public readonly IRepository<User> repo;
         public readonly IMapper mapper;
+        SqlDataReader reader;
         public UserService(IRepository<User> repo, IMapper mapper)
         {
             this.repo = repo;
@@ -28,7 +31,7 @@ namespace BLog.Services
             CreatePassHash(user.Password, out byte[] passHash, out byte[] passSalt);
             string? salt = null;
             string? hash = null;
-           // string? newPass = null;
+
             if (passHash != null && passSalt != null)
             {
                 foreach (byte s in passSalt)
@@ -40,10 +43,8 @@ namespace BLog.Services
                     hash += h.ToString("x2");
                 }
 
-                //newPass = salt + hash;
-            }
 
-            //user.Password = newPass;
+            }
 
             var data = mapper.Map<User>(user);
 
@@ -54,27 +55,60 @@ namespace BLog.Services
 
         public void CreatePassHash(string? pass, out byte[] passHash, out byte[] passSalt)
         {
-            using(var hmac = new HMACSHA512())
+            using(var hmac = new HMACMD5())
             {
                 passSalt = hmac.Key;
-                passHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(pass)); 
+                passHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass)); 
             }
         }
 
         public bool VeryfyPassHash(string? pass, byte[] passHash, byte[] passSalt)
         {
-            using(var hmac = new HMACSHA512(passSalt))
+            
+            using(var hmac = new HMACMD5(passSalt))
             {
-                var hash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(pass));
+                string? pp=null;
+                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass));
+                foreach (byte h in hash)
+                {
+                    pp += h.ToString("x2");
+                }
                 return hash.SequenceEqual(passHash);
             }
         }
 
-        
 
-        public bool LogIn(User user)
+
+        public bool LogIn(UserDTO user, string table, string value)
         {
-            throw new NotImplementedException();
+            
+            byte[] passHash;
+            byte[] passSalt;
+            var data = mapper.Map<User>(user);
+            value = $@"SELECT name,passwordHash,passwordSalt FROM Users
+                        WHERE name='{user.Name}'";
+
+            reader = DbContext.ExecuteRead(value);
+            while (reader.Read())
+            {
+                       
+                passHash = Encoding.UTF8.GetBytes(reader["passwordHash"].ToString());
+                passSalt = Encoding.UTF8.GetBytes(reader["passwordSalt"].ToString());
+                
+                if(VeryfyPassHash(user.Password,passHash,passSalt)==true)
+                {
+                    break;
+                }
+                else
+                {
+                    continue;
+                }
+                
+            }
+
+
+
+            return true;//VeryfyPassHash(user.Password, dataPassHash., dataPassSalt);
         }
     }
 }

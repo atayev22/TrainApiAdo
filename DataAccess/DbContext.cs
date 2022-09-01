@@ -39,5 +39,29 @@ namespace DataAccess
             }
            
         }
+
+
+
+        public static SqlDataReader ExecuteRead(string sql)
+        {
+            sqlConnection = new SqlConnection(connectionString);
+            sqlCommand = new SqlCommand(sql, sqlConnection);
+
+            try
+            {
+                sqlConnection.Open();
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+                return reader;
+            }
+            catch (Exception)
+            {
+                throw new Exception("CONNECTION NOT found");
+            }
+            finally
+            {
+                
+            }
+
+        }
     }
 }
