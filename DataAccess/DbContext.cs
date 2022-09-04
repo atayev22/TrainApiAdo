@@ -11,8 +11,8 @@ namespace DataAccess
 {
     public static class DbContext
     {
-        private static string connectionString = "Server=DESKTOP-EDJ7DMD;Database=DEV2;Encrypt=false;Trusted_Connection=True;";//hp
-        //private static string connectionString = "Server=DESKTOP-EDJ7DMD;Database=DEV;Encrypt=false;Trusted_Connection=True;";
+        //private static string connectionString = "Server=DESKTOP-EDJ7DMD;Database=DEV2;Encrypt=false;Trusted_Connection=True;";//hp
+        private static string connectionString = "Server=WIN-QEMS5K9DNV9\\SQLEXPRESS;Database=DEV2;Encrypt=false;Trusted_Connection=True;";
         private static SqlConnection? sqlConnection;
         private static SqlCommand? sqlCommand;
 
@@ -57,10 +57,7 @@ namespace DataAccess
             {
                 throw new Exception("CONNECTION NOT found");
             }
-            finally
-            {
-                
-            }
+            
 
         }
     }

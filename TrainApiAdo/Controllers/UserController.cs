@@ -18,12 +18,19 @@ namespace TrainApiAdo.Controllers
             this.userService = userService;
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public IActionResult Register(UserDTO user)
         {
             string? value = null;
-            userService.Register(user, DataAccess.Entities.User.table, value);
-            return Ok();
+            if(userService.Register(user, DataAccess.Entities.User.table, value))
+            {
+                return Ok("reg proshla uspeshna");
+            }
+            else
+            {
+                return BadRequest("takoy user yest");
+            }
+            
         }
 
         [HttpPost("Login")]

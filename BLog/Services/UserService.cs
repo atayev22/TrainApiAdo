@@ -26,50 +26,64 @@ namespace BLog.Services
         }
 
 
-        public void Register(UserDTO user, string table, string value)
+        public bool Register(UserDTO user, string table, string value)
         {
-            CreatePassHash(user.Password, out byte[] passHash);
-            string? hash = null;
+            string sql = $@"SELECT name FROM Users
+                            WHERE name='{user.Name}'";
+            reader = DbContext.ExecuteRead(sql);
 
-            if (passHash != null )
-            {
-                
-                foreach (byte h in passHash)
+               if (!reader.HasRows)
                 {
-                    hash += h.ToString("x2");
+                    CreatePassHash(user.Password, out byte[] passHash);
+                    string? hash = null;
+
+                    if (passHash != null)
+                    {
+                        
+                        foreach (byte h in passHash)
+                        {
+                            hash += h.ToString("x2");
+                        }
+
+
+                    }
+
+                    var data = mapper.Map<User>(user);
+
+                    value = $@"(name,passwordHash) VALUES('{data.Name}','{hash}')";
+
+                    repo.Add(data, table, value);
+                return true;
                 }
-
-
+            else
+            {
+                return false;
             }
-
-            var data = mapper.Map<User>(user);
-
-            value = $@"(name,passwordHash,passwordSalt) VALUES('{data.Name}','{hash}')";
-
-            repo.Add(data, table, value);
+                        
         }
 
         public void CreatePassHash(string? pass, out byte[] passHash)
         {
-            using(var hmac = new HMACMD5())
-            {
-                passHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass)); 
-            }
+            HMACMD5 hmac = new HMACMD5();
+            passHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass)); 
+            
         }
 
         public bool VeryfyPassHash(string? pass, byte[] passHash)
         {
+
+            HMACMD5 hmac = new HMACMD5();
             
-            using(var hmac = new HMACMD5())
-            {
-                string? pp=null;
-                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass));
+                string? pp = null;
+                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass)); 
                 foreach (byte h in hash)
                 {
                     pp += h.ToString("x2");
-                }
+                }               
+
                 return hash.SequenceEqual(passHash);
-            }
+                
+            
         }
 
 
