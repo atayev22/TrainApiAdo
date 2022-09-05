@@ -39,14 +39,19 @@ namespace TrainApiAdo.Controllers
             try
             {
                 string? value = null;
-                userService.LogIn(user, DataAccess.Entities.User.table, value);
-                return Ok();
+                if (userService.LogIn(user, DataAccess.Entities.User.table, value))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return BadRequest();
+                throw new Exception($"{e.Source}");
             }
             
         }
