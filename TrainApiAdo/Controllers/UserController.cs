@@ -11,11 +11,10 @@ namespace TrainApiAdo.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        IUserService<User,UserDTO> userService;
-
+        IUserService<User,UserDTO> userService;        
         public UserController(BLog.IServices.IUserService<User, UserDTO> userService)
         {
-            this.userService = userService;
+            this.userService = userService;           
         }
 
         [HttpPost("Register")]
@@ -39,7 +38,7 @@ namespace TrainApiAdo.Controllers
             try
             {
                 string? value = null;
-                if (userService.LogIn(user, DataAccess.Entities.User.table, value))
+                if (userService.LogIn(user, DataAccess.Entities.User.table, value)!=null)
                 {
                     return Ok();
                 }
