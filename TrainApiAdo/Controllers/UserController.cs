@@ -38,9 +38,10 @@ namespace TrainApiAdo.Controllers
             try
             {
                 string? value = null;
-                if (userService.LogIn(user, DataAccess.Entities.User.table, value)!=null)
+                var jwt = userService.LogIn(user, DataAccess.Entities.User.table, value);
+                if (jwt!=null)
                 {
-                    return Ok();
+                    return Ok(jwt);
                 }
                 else
                 {
