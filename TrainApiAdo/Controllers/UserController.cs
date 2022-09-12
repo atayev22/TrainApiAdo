@@ -35,8 +35,7 @@ namespace TrainApiAdo.Controllers
         [HttpPost("Login")]
         public IActionResult LogIn(UserDTO user)
         {
-            try
-            {
+            
                 string? value = null;
                 var jwt = userService.LogIn(user, DataAccess.Entities.User.table, value);
                 if (jwt!=null)
@@ -48,11 +47,6 @@ namespace TrainApiAdo.Controllers
                     return BadRequest();
                 }
 
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"{e.Source}");
-            }
             
         }
     }

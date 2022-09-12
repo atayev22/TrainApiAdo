@@ -24,7 +24,7 @@ namespace BLog.Services
         public readonly IRepository<User> repo;
         public readonly IMapper mapper;
         SqlDataReader? reader;
-        private readonly IConfiguration configuration;
+        private IConfiguration configuration;
         public UserService(IRepository<User> repo, IMapper mapper,IConfiguration configuration)
         {
             this.repo = repo;
@@ -73,7 +73,7 @@ namespace BLog.Services
 
         public void CreatePassHash(string pass, out byte[] passHash)
         {
-            MD5 hmac = MD5.Create();
+            SHA512 hmac = SHA512.Create();
             passHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass)); 
             
         }
@@ -84,7 +84,7 @@ namespace BLog.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Name),
             };
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration.GetSection("AppSetings:Token").Value));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("AppSetings:Token").Value));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
@@ -100,7 +100,7 @@ namespace BLog.Services
         public bool VeryfyPassHash(string pass, string? passHash)
         {
             string? hashCheck = null;
-            MD5 hmac = MD5.Create();
+            SHA512 hmac = SHA512.Create();
                            
             var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pass));
             foreach(byte b in hash)
@@ -148,7 +148,7 @@ namespace BLog.Services
             catch(Exception ex)
             {
                
-                throw new Exception(ex.Source);
+                throw new Exception(ex.HelpLink);
             }
 
         }
