@@ -2,6 +2,7 @@
 using DataAccess.Entities;
 
 using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace TrainApiAdo.Controllers
             this.userService = userService;           
         }
 
-        [HttpPost("Register")]
+        [HttpPost("Register"),Authorize(Roles ="admin")]
         public IActionResult Register(UserDTO user)
         {
             string? value = null;

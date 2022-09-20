@@ -35,8 +35,8 @@ namespace BLog.Services
 
         public bool Register(UserDTO user, string table, string value)
         {
-            string sql = $@"SELECT name FROM Users
-                            WHERE name='{user.Name}'";
+            string sql = $@"SELECT us_name FROM Users
+                            WHERE us_name='{user.Name}'";
             reader = DbContext.ExecuteRead(sql);
 
                if (!reader.HasRows)
@@ -57,7 +57,7 @@ namespace BLog.Services
 
                     var data = mapper.Map<User>(user);
 
-                    value = $@"(name,passwordHash) VALUES('{data.Name}','{hash}')";
+                    value = $@"(us_name,passwordHash) VALUES('{data.Name}','{hash}')";
 
                     repo.Add(data, table, value);
 
@@ -82,6 +82,7 @@ namespace BLog.Services
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Name),
+                new Claim(ClaimTypes.Role,user.role)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("AppSetings:Token").Value));
@@ -127,13 +128,15 @@ namespace BLog.Services
             {
                 string token = "";
                 string? passHash;
-                var data = mapper.Map<User>(user);
-                value = $@"SELECT name,passwordHash FROM Users
-                        WHERE name='{user.Name}'";
+                User data = mapper.Map<User>(user);
+                value = $@"select u.us_name,u.passwordHash,r.rl_name as Role from Users as u
+                            inner join Roles as r on r.id=u.role_id
+                        WHERE us_name='{user.Name}'";
 
                 reader = DbContext.ExecuteRead(value);
                 if(reader.Read())
                 {
+                    data.role = reader["Role"].ToString();
                     passHash = reader["passwordHash"].ToString();
                     if (VeryfyPassHash(user.Password, passHash) == true)
                     {
