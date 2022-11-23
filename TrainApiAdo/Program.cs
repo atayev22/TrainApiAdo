@@ -18,30 +18,13 @@ using Swashbuckle.AspNetCore.Filters;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-#region JwtToken
-
-
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
-    });
-
-#endregion
 #region BLog
 
 builder.Services.AddScoped<ITransportListService, TransportListService>();
 builder.Services.AddScoped<IUserService<User, UserDTO>, UserService>();
 builder.Services.AddScoped<IUserListService, UserListService>();
 builder.Services.AddScoped<IOrderListService, OrderListService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 #endregion
@@ -79,6 +62,25 @@ builder.Services.AddSwaggerGen(options =>
 
             options.OperationFilter<SecurityRequirementsOperationFilter>();
         });
+
+#region JwtToken
+
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(builder.Configuration.GetSection("AppSetings:Token").Value)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+
+#endregion
 
 var app = builder.Build();
 

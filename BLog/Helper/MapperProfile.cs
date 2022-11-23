@@ -15,6 +15,9 @@ namespace BLog.Helper
         {
             CreateMap<User,UserDTO>();
             CreateMap<UserDTO, User>();
+
+            CreateMap<Subject, SubjectDTO>();
+            CreateMap<SubjectDTO, Subject>();
         }
     }
 }
