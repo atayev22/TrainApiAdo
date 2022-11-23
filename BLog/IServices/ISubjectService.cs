@@ -11,5 +11,6 @@ namespace BLog.IServices
     public interface ISubjectService: IBaseService<Subject>
     {
         DataTable GetSubject();
+        DataTable GetSubjectById(int id);
     }
 }

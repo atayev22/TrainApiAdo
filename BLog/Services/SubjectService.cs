@@ -47,6 +47,16 @@ namespace BLog.Services
             
         }
 
+        public DataTable GetSubjectById(int id)
+        {
+            string query = $@"select S_ID,EX_ID,S_NAME from  T_EXAM
+                              INNER JOIN T_SUBJECT ON S_EX_ID=EX_ID
+                              WHERE S_ID = {id}";
+
+            return DbContext.Execute(query);
+
+        }
+
         public void Update(Subject entity, string table, string value)
         {
             throw new NotImplementedException();

@@ -9,7 +9,7 @@ using System.Data;
 
 namespace TrainApiAdo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class SubjectController : ControllerBase
     {
@@ -20,8 +20,8 @@ namespace TrainApiAdo.Controllers
             this.sbService = sbService;
         }
 
-        [HttpGet("Get")]
-        public string GetSubject()
+        [HttpGet]
+        public IActionResult GetSubject()
 
         {
             try
@@ -29,22 +29,35 @@ namespace TrainApiAdo.Controllers
                 DataTable subject = sbService.GetSubject();
                 var serJson = JsonConvert.SerializeObject(subject);
 
-                return serJson;
-                //return Ok(serJson);
+                return Ok(serJson);
 
             }
             catch (Exception e)
             {
-
-                return "err";//BadRequest(new { message = $"{e.StackTrace}" });
+                return BadRequest(new { message = $"{e.StackTrace}" });
             }
 
         }
-        //public DataTable GetSubject()
-        //{
-        //    DataTable subject = sbService.GetSubject();
-        //    return subject;
-        //}
+
+        [HttpGet]
+        public IActionResult GetSubjectById(int id)
+
+        {
+            try
+            {
+                DataTable subject = sbService.GetSubjectById(id);
+                var serJson = JsonConvert.SerializeObject(subject);
+
+                return Ok(serJson);
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = $"{e.StackTrace}" });
+            }
+
+        }
+
 
 
     }
